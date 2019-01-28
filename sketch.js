@@ -1,11 +1,16 @@
+//Define variables
 let inputs = [];
 let anxietyMod = 0;
 let barImg;
 let pillImg;
+let font;
 let hit = false;
 let bar = 0;
 let spaceD = 0;
+let start = false;
+let mySounds = [];
 
+//Define the poitner object
 const Mouse = {
     position: [window.innerWidth / 2, window.innerHeight / 2],
     update: function () {
@@ -31,6 +36,7 @@ const Mouse = {
     },
 }
 
+//Define the Circle object constructor
 const Circle = function () {
     this.position = [random(40, width - 40), random(40, height - 70)];
     this.update = function (i, arr) {
@@ -48,7 +54,7 @@ const Circle = function () {
 
         this.mouseIsOn() ? fill('#fff5') : noFill();
 
-        stroke(color(random(255), random(255), random(255)));
+        stroke(color(random(255), random(255), random(255),100));
         strokeWeight(3);
         ellipseMode(CENTER);
         let p = [this.position[0] + random(-5, 5), this.position[1] + random(-5, 5)]
@@ -73,6 +79,7 @@ const Circle = function () {
     }
 }
 
+//Define the Pill object constructor
 const Pill = function () {
     this.position = [random(40, width - 40), random(40, height - 70)];
     this.update = function (i, arr) {
@@ -96,7 +103,7 @@ const Pill = function () {
     }
 }
 
-
+//Define the Bullet object constructor
 const Bullet = function () {
     this.position = function () {
         switch (~~random(0, 3)) {
@@ -132,10 +139,10 @@ const Bullet = function () {
             anxietyMod += 0.05;
             arr.splice(i, 1);
             hit = true;
-        }else{
+        } else {
 
-        if (this.inReach() && inputs.includes(32) && spaceD === 0)
-            arr.splice(i, 1);
+            if (this.inReach() && inputs.includes(32) && spaceD === 0)
+                arr.splice(i, 1);
         }
 
     }
@@ -166,6 +173,7 @@ const Bullet = function () {
     }
 }
 
+//Define the Bar object constructor
 const Bar = function () {
     let val = 0.1;
     let acc = 0;
@@ -207,11 +215,29 @@ const Bar = function () {
     }
 }
 
+//Define the Game Implementation object constructor
 const GameI = function () {
     let entities = [Mouse];
     let nextCircle = 300;
     let nextBullet = 600;
     let nextPill = 1200;
+
+    this.init = function () {
+        entities = [Mouse];
+        nextCircle = 300;
+        nextBullet = 600;
+        nextPill = 1200;
+        anxietyMod = 0;
+        hit = false;
+        bar = 0;
+        spaceD = 0;
+        start = false;
+        this.addEntity(new Bar());
+        Mouse.position = [window.innerWidth / 2, window.innerHeight / 2];
+        mySounds[1].stop();
+        mySounds[1].loop();
+        mySounds[0].stop();
+    }
 
     this.addEntity = function (newEntity) {
         entities.push(newEntity);
@@ -223,7 +249,7 @@ const GameI = function () {
             anxietyMod = 0;
 
         if (nextCircle <= 0) {
-            nextCircle = random(50, 200) - (millis() / 1000);
+            nextCircle = random(50, 200) - (milliss() / 1000);
 
             this.addEntity(new Circle())
         } else {
@@ -231,7 +257,7 @@ const GameI = function () {
         }
 
         if (nextBullet <= 0) {
-            nextBullet = random(200, 500) - (millis() / 1000);
+            nextBullet = random(200, 500) - (milliss() / 1000);
 
             this.addEntity(new Bullet())
         } else {
@@ -239,7 +265,7 @@ const GameI = function () {
         }
 
         if (nextPill <= 0) {
-            nextPill = random(350, 450) - (millis() / 1000);
+            nextPill = random(350, 450) - (milliss() / 1000);
 
             this.addEntity(new Pill())
         } else {
@@ -300,52 +326,106 @@ const GameI = function () {
 
 }
 
+//Standard p5 preload function
 function preload() {
     barImg = loadImage('assets/bar.png');
     pillImg = loadImage('assets/pill.png');
+    font = loadFont('assets/GT-America-Bold.otf');
+    mySounds[0] = loadSound('assets/loop1.mp3');
+    mySounds[1] = loadSound('assets/loop2.mp3');
 }
 
 let c;
 const Game = new GameI();
 Game.addEntity(new Bar())
 
+//Standard p5 setup function
 function setup() {
     c = createCanvas(windowWidth, windowHeight);
-    c.elt.requestPointerLock();
+    textFont(font);
+    mySounds[0].loop();
+    mySounds[1].setVolume(0.01);
+    mySounds[0].setVolume(0.02);
 
 }
 
+//Standard p5 draw function
 function draw() {
-    if (!inputs.includes(81)){
+    if (start) {
+        if (document.pointerLockElement === c.elt) {
+            if (!inputs.includes(81)) {
+                background('#112');
+                Game.update();
+                Game.draw();
+                inputs = [];
+                hit = false;
+            } else {
+                background('#1121');
+            }
+        } else {
+            background('#112');
+            textSize(width / 30);
+            fill('#fff');
+
+            text('Pointer lock is required', (width - textWidth('Pointer lock is required')) / 2, height / 2);
+            text('Click to restart', (width - textWidth('Click to restart')) / 2, height*3 / 4);
+
+            //POINTER LOCK IS REQUIRED, TAP TO RESTART
+        }
+    } else {
+        //TITLE SCREEN
         background('#112');
-        Game.update();
-        Game.draw();
-        inputs = [];
-        hit = false;
-    }else{
-        background('#1121');
+        textSize(width / 9);
+        for (let i = 0; i < 2; i++) {
+            fill(color(random(255), random(255), random(255),100));
+            text('Axietrip', ((width - textWidth('Axietrip')) / 2) + random(-10, 10), (height / 2) + random(-10, 10));
+        }
+        fill('#fff');
+        text('Axietrip', (width - textWidth('Axietrip')) / 2, height / 2);
+        textSize(width / 30);
+        text('Click to begin', (width - textWidth('Click to begin')) / 2, height*3 / 4);
+        textSize(width / 70);
+        text('WARNING: This site contains flashing lights and/or colors.', (width - textWidth('WARNING: This site contains flashing lights and/or colors.')) / 2, height*9 / 10);
+
     }
 }
 
-
+//Handle window resize
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 
+//Handle mouse presses
 function mousePressed() {
-    if (document.pointerLockElement !== c.elt) c.elt.requestPointerLock()
+    if (document.pointerLockElement !== c.elt){
+        startMil = millis();
+        Game.init();
+        c.elt.requestPointerLock()
+        start = true;
+
+
+    }
     inputs.push(mouseButton);
 }
 
+//Handle key presses
 function keyPressed() {
-    inputs.push(keyCode)
+    inputs.push(keyCode);
 }
+
+//Handle key release
 function keyReleased() {
     keyCode == 81 ? inputs = [] : null;
 }
+function milliss(){
+    return  millis() - startMil;
+}
 
+//Handle mouse movement
 document.onmousemove = function (e) {
-    Mouse.position[0] += e.movementX + random(-e.movementX * 2, e.movementX * 2);
-    Mouse.position[1] += e.movementY + random(-e.movementY * 2, e.movementY * 2);
+    if (!inputs.includes(81) && start) {
+        Mouse.position[0] += e.movementX + random(-e.movementX * 2, e.movementX * 2);
+        Mouse.position[1] += e.movementY + random(-e.movementY * 2, e.movementY * 2);
+    }
 
 }
