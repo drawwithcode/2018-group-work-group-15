@@ -6,9 +6,12 @@ let pillImg;
 let font;
 let hit = false;
 let bar = 0;
+let tutorial = 0;
 let spaceD = 0;
 let start = false;
+let end = false;
 let mySounds = [];
+
 
 //Define the poitner object
 const Mouse = {
@@ -54,7 +57,7 @@ const Circle = function () {
 
         this.mouseIsOn() ? fill('#fff5') : noFill();
 
-        stroke(color(random(255), random(255), random(255),100));
+        stroke(color(random(255), random(255), random(255), 100));
         strokeWeight(3);
         ellipseMode(CENTER);
         let p = [this.position[0] + random(-5, 5), this.position[1] + random(-5, 5)]
@@ -86,6 +89,11 @@ const Pill = function () {
         if (this.mouseIsOn()) {
             anxietyMod -= 1;
             arr.splice(i, 1)
+            for (let j = 0; j < 10; j++) {
+                let ri = ~~random(arr.length - 1);
+                if (arr[ri] instanceof Circle)
+                    arr.splice(ri, 1)
+            }
         }
 
     }
@@ -305,6 +313,13 @@ const GameI = function () {
             fill('red');
             rect(0, 0, width, height);
         }
+        if (bar == 255){
+            end = true;
+            document.exitPointerLock();
+            mySounds[1].stop();
+            mySounds[2].play();
+            mySounds[3].play();
+        }
         let tmp = bar.toString(16);
         tmp.length < 2 ? tmp = '0' + tmp : null;
         fill('#ff0000' + tmp)
@@ -326,6 +341,97 @@ const GameI = function () {
 
 }
 
+//Define the Tutorial Game Implementation object constructor
+const TutorialI = function () {
+    let entities = [Mouse];
+    let nextCircle = 300;
+    let nextBullet = 300;
+    let nextPill = 300;
+
+
+
+    this.step = 0;
+
+    this.init = function () {
+        this.step = 0;
+        entities = [Mouse];
+        anxietyMod = 0;
+        hit = false;
+        bar = 0;
+        spaceD = 0;
+        this.addEntity(new Bar());
+        Mouse.position = [window.innerWidth / 2, window.innerHeight / 2];
+    }
+
+    this.addEntity = function (newEntity) {
+        entities.push(newEntity);
+    }
+
+    this.update = function () {
+        anxietyMod = 0;
+
+        if (this.step > 0) {
+            if (nextCircle <= 0) {
+                nextCircle = random(100, 200);
+
+                this.addEntity(new Circle())
+
+            } else {
+                nextCircle--;
+            }
+        }
+
+        if (this.step > 1) {
+            if (nextBullet <= 0) {
+                nextBullet = random(200, 500);
+
+                this.addEntity(new Bullet())
+            } else {
+                nextBullet--;
+            }
+        }
+
+        if (this.step > 2) {
+            if (nextPill <= 0) {
+                nextPill = random(500, 800);
+
+                this.addEntity(new Pill())
+            } else {
+                nextPill--;
+            }
+        }
+
+
+        entities.forEach(function (e, i, arr) {
+            e.update(i, arr);
+        });
+        spaceD > 0 ? spaceD-- : null;
+    };
+
+    this.draw = function () {
+        if (inputs.includes(32) && spaceD === 0) {
+            spaceD = 60;
+            push();
+            noFill()
+            stroke('#aaaaff');
+            strokeWeight(7);
+            ellipseMode(CENTER);
+            ellipse(Mouse.x, Mouse.y, 50);
+            stroke('#ffffff');
+            strokeWeight(3);
+            ellipse(Mouse.x, Mouse.y, 50);
+            pop();
+        }
+        entities.forEach(function (e) {
+            e.draw();
+        });
+        if (hit) {
+            hit = false;
+        }
+    };
+
+}
+
 //Standard p5 preload function
 function preload() {
     barImg = loadImage('assets/bar.png');
@@ -333,11 +439,15 @@ function preload() {
     font = loadFont('assets/GT-America-Bold.otf');
     mySounds[0] = loadSound('assets/loop1.mp3');
     mySounds[1] = loadSound('assets/loop2.mp3');
+    mySounds[2] = loadSound('assets/s1.mp3');
+    mySounds[3] = loadSound('assets/s2.mp3');
 }
 
 let c;
 const Game = new GameI();
 Game.addEntity(new Bar())
+
+const Tutorial = new TutorialI();
 
 //Standard p5 setup function
 function setup() {
@@ -346,47 +456,113 @@ function setup() {
     mySounds[0].loop();
     mySounds[1].setVolume(0.01);
     mySounds[0].setVolume(0.02);
+    mySounds[2].setVolume(0.5);
+    mySounds[3].setVolume(0.02);
 
 }
 
 //Standard p5 draw function
 function draw() {
-    if (start) {
-        if (document.pointerLockElement === c.elt) {
-            if (!inputs.includes(81)) {
-                background('#112');
-                Game.update();
-                Game.draw();
-                inputs = [];
-                hit = false;
+    if (tutorial) {
+        if (!inputs.includes(81)) {
+            background('#112');
+            fill('#fff');
+            if (document.pointerLockElement === c.elt) {
+                let tuttext = [];
+                textSize(width / 50);
+                switch (tutorial) {
+                    case 1:
+                        tuttext[0] = "Stay relaxed, press A & D to balance your breath,";
+                        tuttext[1] = "don't let the bar get too close to the edges";
+                        tuttext[2] = "Press T to continue";
+                        inputs.includes(84) ? tutorial++ : null;
+                        break;
+                    case 2:
+                        Tutorial.step = 1;
+                        tuttext[0] = "You have one simple task to carry on,";
+                        tuttext[1] = "when circles appear just click on them,";
+                        tuttext[2] = "easy, right?";
+                        tuttext[3] = "Press T to continue";
+                        inputs.includes(84) ? tutorial++ : null;
+                        break;
+                    case 3:
+                        Tutorial.step = 2;
+                        tuttext[0] = "The world is a unpredictable place,";
+                        tuttext[1] = "watch out for the coming splinters and shield yourself with SPACE";
+                        tuttext[2] = "press T to continue";
+                        inputs.includes(84) ? tutorial++ : null;
+                        break;
+                    case 4:
+                        Tutorial.step = 3;
+                        tuttext[0] = "If you think you can take it";
+                        tuttext[1] = "you can always press Q to take a break,";
+                        tuttext[2] = "or you can resort to the modern solutions";
+                        tuttext[3] = "press T to finish";
+                        inputs.includes(84) ? tutorial = 0 : null;
+                        break;
+                }
+                for (let i = 0; i < tuttext.length; i++) {
+                    text(tuttext[i], (width - textWidth(tuttext[i])) / 2, height * (2 + i) / 10);
+                }
+                Tutorial.update();
+                Tutorial.draw();
             } else {
-                background('#1121');
+                text('Pointer lock is required', (width - textWidth('Pointer lock is required')) / 2, height / 2);
+                text('Click to continue', (width - textWidth('Click to continue')) / 2, height * 3 / 4);
+
+            }
+            inputs = [];
+        } else {
+            background('#1121');
+        }
+
+    } else {
+        if (start) {
+            if (end) {
+                background('#112');
+                textSize(width / 30);
+                text('Not so easy as it seemed right?', (width - textWidth('Not so easy as it seemed right?')) / 2, height / 2);
+            } else {
+                if (document.pointerLockElement === c.elt) {
+                    if (!inputs.includes(81)) {
+                        background('#112');
+                        Game.update();
+                        Game.draw();
+                        inputs = [];
+                        hit = false;
+                    } else {
+                        background('#1121');
+                    }
+                } else {
+                    background('#112');
+                    textSize(width / 30);
+                    fill('#fff');
+
+                    text('Pointer lock is required', (width - textWidth('Pointer lock is required')) / 2, height / 2);
+                    text('Click to continue', (width - textWidth('Click to continue')) / 2, height * 3 / 4);
+                }
             }
         } else {
+            if (inputs.includes(84)) {
+                c.elt.requestPointerLock();
+                tutorial = 1;
+                Tutorial.init();
+            }
+            //TITLE SCREEN
             background('#112');
-            textSize(width / 30);
+            textSize(width / 9);
+            for (let i = 0; i < 2; i++) {
+                fill(color(random(255), random(255), random(255), 100));
+                text('Axietrip', ((width - textWidth('Axietrip')) / 2) + random(-10, 10), (height / 2) + random(-10, 10));
+            }
             fill('#fff');
-
-            text('Pointer lock is required', (width - textWidth('Pointer lock is required')) / 2, height / 2);
-            text('Click to restart', (width - textWidth('Click to restart')) / 2, height*3 / 4);
-
-            //POINTER LOCK IS REQUIRED, TAP TO RESTART
+            text('Axietrip', (width - textWidth('Axietrip')) / 2, height / 2);
+            textSize(width / 30);
+            text('Click to begin, press T for tutorial', (width - textWidth('Click to begin, press t for tutorial')) / 2, height * 3 / 4);
+            textSize(width / 70);
+            text('WARNING: This site contains flashing lights and/or colors.', (width - textWidth('WARNING: This site contains flashing lights and/or colors.')) / 2, height * 9 / 10);
+            inputs = [];
         }
-    } else {
-        //TITLE SCREEN
-        background('#112');
-        textSize(width / 9);
-        for (let i = 0; i < 2; i++) {
-            fill(color(random(255), random(255), random(255),100));
-            text('Axietrip', ((width - textWidth('Axietrip')) / 2) + random(-10, 10), (height / 2) + random(-10, 10));
-        }
-        fill('#fff');
-        text('Axietrip', (width - textWidth('Axietrip')) / 2, height / 2);
-        textSize(width / 30);
-        text('Click to begin', (width - textWidth('Click to begin')) / 2, height*3 / 4);
-        textSize(width / 70);
-        text('WARNING: This site contains flashing lights and/or colors.', (width - textWidth('WARNING: This site contains flashing lights and/or colors.')) / 2, height*9 / 10);
-
     }
 }
 
@@ -397,13 +573,13 @@ function windowResized() {
 
 //Handle mouse presses
 function mousePressed() {
-    if (document.pointerLockElement !== c.elt){
+    if (!end && document.pointerLockElement !== c.elt)
+        c.elt.requestPointerLock();
+    if (!start && !tutorial) {
         startMil = millis();
         Game.init();
-        c.elt.requestPointerLock()
+        c.elt.requestPointerLock();
         start = true;
-
-
     }
     inputs.push(mouseButton);
 }
@@ -417,13 +593,14 @@ function keyPressed() {
 function keyReleased() {
     keyCode == 81 ? inputs = [] : null;
 }
-function milliss(){
-    return  millis() - startMil;
+
+function milliss() {
+    return millis() - startMil;
 }
 
 //Handle mouse movement
 document.onmousemove = function (e) {
-    if (!inputs.includes(81) && start) {
+    if (!inputs.includes(81) && (start || tutorial)) {
         Mouse.position[0] += e.movementX + random(-e.movementX * 2, e.movementX * 2);
         Mouse.position[1] += e.movementY + random(-e.movementY * 2, e.movementY * 2);
     }
