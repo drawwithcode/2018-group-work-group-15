@@ -284,7 +284,6 @@ const GameI = function () {
             e.update(i, arr);
         });
         spaceD > 0 ? spaceD-- : null;
-        console.log(anxietyMod)
     };
 
     this.draw = function () {
@@ -563,10 +562,10 @@ function draw() {
             textSize(width / 9);
             for (let i = 0; i < 2; i++) {
                 fill(color(random(255), random(255), random(255), 100));
-                text('Axietrip', ((width - textWidth('Axietrip')) / 2) + random(-10, 10), (height / 2) + random(-10, 10));
+                text('Anxietrip', ((width - textWidth('Anxietrip')) / 2) + random(-10, 10), (height / 2) + random(-10, 10));
             }
             fill('#fff');
-            text('Axietrip', (width - textWidth('Axietrip')) / 2, height / 2);
+            text('Anxietrip', (width - textWidth('Anxietrip')) / 2, height / 2);
             textSize(width / 30);
             text('Click to begin, press T for tutorial', (width - textWidth('Click to begin, press t for tutorial')) / 2, height * 3 / 4);
             textSize(width / 70);
