@@ -114,3 +114,9 @@ const Circle = function () {
 ## Challenges
 
 The main challenge was to design the right interactions for the feelings that we're trying to convey.
+
+## Inspirations/References
+
+- [Grid 16](https://armorgames.com/play/841/grid16) - For the multitasking aspect of the experience.
+- [Fahrenheit/Indigo Prophecy](https://www.youtube.com/watch?v=AynRWv4iCyA) (Archives Chapter) - For interactions.
+- [SLEEP PHASES](https://jandornig.github.io/SLEEP_merge/) - For graphic style.
