@@ -16,7 +16,7 @@
 
 The main concept behind our project is Anxiety, not everyday anxiety but unreasonable levels of anxiety that affect many of us and make it difficult to complete even simple tasks.<br>
 We want to raise awareness on anxiety disorders through a simple interaction that shows how hard it is to keep up when not in complete control of ourselves.<br>
-To do that we developed 4 objects with the relative intractions each one to convey different feeling:
+To do that we developed 4 objects with the relative intractions each one to convey a different feeling:
 1. The bar that has to be kept balanced
 2. The circles to make disappear by clicking
 3. The bullets that you have to shield yourself from
@@ -136,7 +136,7 @@ const Pill = function () {
 ```
 The Pill is instead more simple in structure but the code inside makes it a bit tricky as it isn't always reliable, it's effect is tied to the number of entities in game.
 
-All the entites have a *drawExtra* function used to make the glitchy effect, on some of these object it is left empty as they don't have said effect applied to them.
+All the entites have a *drawExtra* function used to make the glitchy effect, on some of these objects it is left empty as they don't have said effect applied to them.
 
 ## Challenges
 
