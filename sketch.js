@@ -13,7 +13,7 @@ let end = false;
 let mySounds = [];
 
 
-//Define the poitner object
+//Define the pointer object
 const Mouse = {
     position: [window.innerWidth / 2, window.innerHeight / 2],
     update: function () {
@@ -464,10 +464,12 @@ function setup() {
 //Standard p5 draw function
 function draw() {
     if (tutorial) {
+        //TUTORIAL STARTED
         if (!inputs.includes(81)) {
             background('#112');
             fill('#fff');
             if (document.pointerLockElement === c.elt) {
+                //TUTORIAL SCREEN
                 let tuttext = [];
                 textSize(width / 50);
                 switch (tutorial) {
@@ -507,23 +509,30 @@ function draw() {
                 Tutorial.update();
                 Tutorial.draw();
             } else {
+                //POINTER LOCK REQUIRED SCREEN
                 text('Pointer lock is required', (width - textWidth('Pointer lock is required')) / 2, height / 2);
                 text('Click to continue', (width - textWidth('Click to continue')) / 2, height * 3 / 4);
 
             }
             inputs = [];
         } else {
+            //PAUSED
             background('#1121');
         }
 
     } else {
         if (start) {
             if (end) {
+                //ENDING SCREEN
                 background('#112');
                 textSize(width / 30);
                 text('Not so easy as it seemed right?', (width - textWidth('Not so easy as it seemed right?')) / 2, height / 2);
+                            textSize(width / 50);
+                text('Anxiety is overwhelming and any effort to fight it seems useless.', (width - textWidth('Anxiety is overwhelming and any effort to fight it seems useless.')) / 2, height * 3 / 4);
+
             } else {
                 if (document.pointerLockElement === c.elt) {
+                    //GAME SCREEN
                     if (!inputs.includes(81)) {
                         background('#112');
                         Game.update();
@@ -534,6 +543,7 @@ function draw() {
                         background('#1121');
                     }
                 } else {
+                    //POINTER LOCK REQUIRED SCREEN
                     background('#112');
                     textSize(width / 30);
                     fill('#fff');
