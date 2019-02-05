@@ -526,8 +526,10 @@ function draw() {
                 background('#112');
                 textSize(width / 30);
                 text('Not so easy as it seemed right?', (width - textWidth('Not so easy as it seemed right?')) / 2, height / 2);
-                            textSize(width / 50);
+                textSize(width / 50);
                 text('Anxiety is overwhelming and any effort to fight it seems useless.', (width - textWidth('Anxiety is overwhelming and any effort to fight it seems useless.')) / 2, height * 3 / 4);
+                textSize(width / 70);
+                text('Refresh the page to restart.', (width - textWidth('Refresh the page to restart.')) / 2, height * 9 / 10);
 
             } else {
                 if (document.pointerLockElement === c.elt) {

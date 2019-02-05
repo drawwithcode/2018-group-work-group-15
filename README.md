@@ -24,7 +24,7 @@ To keep the code simple and easy to read we went with a more object oriented str
 Game.update();
 Game.draw();
 ```
-While the rest of the code in the function is used to handle other parts of the sketch like Title Screen, Ending Screen...
+While the rest of the code in the function is used to handle other parts of the sketch like *Title Screen*, *Ending Screen*...
 
 ### Game object
 
@@ -54,12 +54,14 @@ Since our solution is object oriented, the **draw** and **update** functions mai
 
 All the entities have the same functions used to **update** and **draw** them and some also have other *utility* functions.
 
+#### Bar
 
+![Bar](imgs/bar.png)
 
 ```
 const Bar = function () {
-    let val = 0.1;
-    let acc = 0;
+    let val;
+    let acc;
     
     this.drawExtra = function () {};
 
@@ -68,6 +70,31 @@ const Bar = function () {
     this.update = function () {...}
 }
 ```
+The Bar object is very simple, there is only one of it on screen but it manages a fundamental interaction of the experience, the two local variables are used to position and move the pointer on it.
+
+#### Circle
+
+![Circle](imgs/circle.png)
+
+```
+const Circle = function () {
+    this.position = [...];
+    
+    this.update = function (i, arr) {...}
+    
+    this.drawExtra = function () {...}
+    
+    this.draw = function () {...}
+    
+    this.mouseIsOn = function () {...}
+}
+```
+The circles are just a bit more complex, the object has a position property and aside from the necessary functions it also has a function that checks for the mouse position.
+
+#### Bullet
+
+![Bullet](imgs/bullet.png)
+
 ```
 const Bullet = function () {
     this.position = function () {...}();
@@ -83,6 +110,12 @@ const Bullet = function () {
     this.touch = function () {...}
 }
 ```
+Like the previous object the Bullet object has more methods to handle different interactions and checks.
+
+#### Pill
+
+![Pill](imgs/pill.png)
+
 ```
 const Pill = function () {
     this.position = [...];
@@ -96,24 +129,13 @@ const Pill = function () {
     this.mouseIsOn = function () {...}
 }
 ```
-```
-const Circle = function () {
-    this.position = [...];
-    
-    this.update = function (i, arr) {...}
-    
-    this.drawExtra = function () {...}
-    
-    this.draw = function () {...}
-    
-    this.mouseIsOn = function () {...}
-}
-```
+The Pill is instead more simple in structure but the code inside makes it a bit tricky as it isn't always reliable, it's effect is tied to the number of entities in game.
 
+All the entites have a *drawExtra* function used to make the glitchy effect, on some of these object it is left empty as they don't have said effect applied to them.
 
 ## Challenges
 
-The main challenge was to design the right interactions for the feelings that we're trying to convey.
+The main challenge was to design the right interactions for the feelings that we're trying to convey and to make the experience balanced.
 
 ## Inspirations/References
 
