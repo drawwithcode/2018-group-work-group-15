@@ -1,9 +1,9 @@
 ![Header](imgs/logo.png)
 
 ### Developed by:
-* Beatrice Curti
-* Emanuele Leonardi
-* Matteo Tarda
+* [Beatrice Curti](mailto:bea_curti@libero.it)
+* [Emanuele Leonardi](mailto:emanuele.leonardi97@gmail.com)
+* [Matteo Tarda](mailto:t_matteo@ymail.com)
 
 ### Course:
 [Creative Coding 2018/2019](https://drawwithcode.github.io/2018/)<br>
@@ -15,7 +15,12 @@
 ## Project idea
 
 The main concept behind our project is Anxiety, not everyday anxiety but unreasonable levels of anxiety that affect many of us and make it difficult to complete even simple tasks.<br>
-We want to raise awareness on anxiety disorders through a simple interaction that shows how hard it is to keep up when not in complete control of ourselves.
+We want to raise awareness on anxiety disorders through a simple interaction that shows how hard it is to keep up when not in complete control of ourselves.<br>
+To do that we developed 4 objects with the relative intractions each one to convey different feeling:
+1. The bar that has to be kept balanced
+2. The circles to make disappear by clicking
+3. The bullets that you have to shield yourself from
+4. And the mouse pointer that doesn't follow the movements accurately
 
 ## Developement
 
